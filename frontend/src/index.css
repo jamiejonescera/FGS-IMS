@@ -1,0 +1,54 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
+
+/* Apply Roboto font globally */
+body {
+  font-family: "Roboto", sans-serif;
+}
+
+/* Tailwind base styles */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.custom-scrollbar {
+  scrollbar-width: thin; /* For Firefox */
+  -ms-overflow-style: none; /* For Internet Explorer and Edge */
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 5px; /* Reduced width of the scrollbar */
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #333; /* Dark background of the scrollbar track */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #666; /* Darker gray background of the scrollbar thumb */
+  border-radius: 5px; /* Rounded edges for the scrollbar thumb */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #888; /* Lighter gray on hover */
+}
+
+@keyframes slide-down {
+  0% {
+    transform: translateY(-20px); /* Start slightly above */
+    opacity: 0; /* Start invisible */
+  }
+  100% {
+    transform: translateY(0); /* End at original position */
+    opacity: 1; /* Fully visible */
+  }
+}
+
+/* Add this to your global CSS file (e.g., styles.css or App.css) */
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hidden {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
