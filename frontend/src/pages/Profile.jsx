@@ -53,7 +53,8 @@ const Profile = () => {
     setLoading(true);
 
     try {
-      const response = await fetch('http://127.0.0.1:5000/api/auth/profile', {
+      // FIXED: Changed from 127.0.0.1 to localhost
+      const response = await fetch('http://localhost:5000/api/auth/profile', {
         method: 'PUT',
         credentials: 'include',
         headers: {
@@ -65,6 +66,7 @@ const Profile = () => {
       const data = await response.json();
 
       if (data.success) {
+        // FIXED: Update with the actual user data returned from server
         updateUser(data.user);
         setIsEditing(false);
         toast.success('Profile updated successfully!');
@@ -72,6 +74,7 @@ const Profile = () => {
         toast.error(data.message || 'Failed to update profile');
       }
     } catch (error) {
+      console.error('Profile update error:', error);
       toast.error('An error occurred. Please try again.');
     } finally {
       setLoading(false);
@@ -109,7 +112,8 @@ const Profile = () => {
     setLoading(true);
 
     try {
-      const response = await fetch('http://127.0.0.1:5000/api/auth/change-password', {
+      // FIXED: Changed from 127.0.0.1 to localhost
+      const response = await fetch('http://localhost:5000/api/auth/change-password', {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -131,6 +135,7 @@ const Profile = () => {
         toast.error(data.message || 'Failed to change password');
       }
     } catch (error) {
+      console.error('Password change error:', error);
       toast.error('An error occurred. Please try again.');
     } finally {
       setLoading(false);

@@ -336,13 +336,15 @@ def admin_reset_user_password():
     except Exception as e:
         return jsonify({'success': False, 'message': f'Request failed: {str(e)}'}), 500
 
+# ============================================
+# FIXED PROFILE ROUTE (MAIN ISSUE!)
+# ============================================
 @auth_bp.route('/api/auth/profile', methods=['GET', 'PUT'])
+@login_required  # ← PROPERLY POSITIONED NOW!
 def profile():
     """Get or update user profile"""
     try:
-        # Manual authentication check
-        if not current_user.is_authenticated:
-            return jsonify({'success': False, 'message': 'Not authenticated'}), 401
+        print(f"🔍 Profile route accessed by user: {current_user.email if current_user.is_authenticated else 'Anonymous'}")
         
         if request.method == 'GET':
             return jsonify({
@@ -352,6 +354,7 @@ def profile():
         
         elif request.method == 'PUT':
             data = request.get_json()
+            print(f"🔍 Profile update data: {data}")
             
             if not data:
                 return jsonify({'success': False, 'message': 'No data provided'}), 400
@@ -367,6 +370,7 @@ def profile():
             current_user.last_name = last_name
             
             db.session.commit()
+            print(f"✅ Profile updated successfully for {current_user.email}")
             
             return jsonify({
                 'success': True,
@@ -375,6 +379,7 @@ def profile():
             }), 200
             
     except Exception as e:
+        print(f"❌ Profile route error: {str(e)}")
         db.session.rollback()
         return jsonify({'success': False, 'message': f'Profile operation failed: {str(e)}'}), 500
 
