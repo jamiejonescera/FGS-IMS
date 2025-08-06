@@ -337,11 +337,63 @@ def admin_reset_user_password():
         return jsonify({'success': False, 'message': f'Request failed: {str(e)}'}), 500
 
 # ============================================
-# FIXED PROFILE ROUTE (MAIN ISSUE!)
+# FIXED PROFILE ROUTE WITH EMAIL SUPPORT
 # ============================================
 @auth_bp.route('/api/auth/profile', methods=['GET', 'PUT'])
-@login_required  # ← PROPERLY POSITIONED NOW!
+@login_required
 def profile():
+    """Get or update user profile"""
+    try:
+        print(f"🔍 Profile route accessed by user: {current_user.email if current_user.is_authenticated else 'Anonymous'}")
+        
+        if request.method == 'GET':
+            return jsonify({
+                'success': True,
+                'user': current_user.to_dict()
+            }), 200
+        
+        elif request.method == 'PUT':
+            data = request.get_json()
+            print(f"🔍 Profile update data: {data}")
+            
+            if not data:
+                return jsonify({'success': False, 'message': 'No data provided'}), 400
+            
+            first_name = data.get('first_name', '').strip()
+            last_name = data.get('last_name', '').strip()
+            email = data.get('email', '').strip().lower()  # ← ADDED EMAIL!
+            
+            # Validate required fields
+            if not all([first_name, last_name, email]):  # ← UPDATED VALIDATION!
+                return jsonify({'success': False, 'message': 'First name, last name, and email are required'}), 400
+            
+            # Validate email format
+            if not validate_email(email):  # ← ADDED EMAIL VALIDATION!
+                return jsonify({'success': False, 'message': 'Invalid email format'}), 400
+            
+            # Check if email already exists (for different user)
+            existing_user = User.query.filter_by(email=email).first()
+            if existing_user and existing_user.id != current_user.id:  # ← PREVENT EMAIL CONFLICTS!
+                return jsonify({'success': False, 'message': 'Email address is already in use'}), 400
+            
+            # Update profile
+            current_user.first_name = first_name
+            current_user.last_name = last_name
+            current_user.email = email  # ← ADDED EMAIL UPDATE!
+            
+            db.session.commit()
+            print(f"✅ Profile updated successfully for {current_user.email}")
+            
+            return jsonify({
+                'success': True,
+                'message': 'Profile updated successfully',
+                'user': current_user.to_dict()
+            }), 200
+            
+    except Exception as e:
+        print(f"❌ Profile route error: {str(e)}")
+        db.session.rollback()
+        return jsonify({'success': False, 'message': f'Profile operation failed: {str(e)}'}), 500
     """Get or update user profile"""
     try:
         print(f"🔍 Profile route accessed by user: {current_user.email if current_user.is_authenticated else 'Anonymous'}")

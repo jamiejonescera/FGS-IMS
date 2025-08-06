@@ -9,9 +9,11 @@ const Profile = () => {
   const [showPasswordForm, setShowPasswordForm] = useState(false);
   const [loading, setLoading] = useState(false);
   
+  // FIXED: Added email to profileData state
   const [profileData, setProfileData] = useState({
     first_name: user?.first_name || '',
     last_name: user?.last_name || '',
+    email: user?.email || '', // ← Added email field
   });
 
   const [passwordData, setPasswordData] = useState({
@@ -45,28 +47,34 @@ const Profile = () => {
   const handleProfileSubmit = async (e) => {
     e.preventDefault();
     
-    if (!profileData.first_name.trim() || !profileData.last_name.trim()) {
-      toast.error('First name and last name are required');
+    // FIXED: Added email validation
+    if (!profileData.first_name.trim() || !profileData.last_name.trim() || !profileData.email.trim()) {
+      toast.error('First name, last name, and email are required');
+      return;
+    }
+
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(profileData.email)) {
+      toast.error('Please enter a valid email address');
       return;
     }
 
     setLoading(true);
 
     try {
-      // FIXED: Changed from 127.0.0.1 to localhost
       const response = await fetch('http://localhost:5000/api/auth/profile', {
         method: 'PUT',
         credentials: 'include',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(profileData),
+        body: JSON.stringify(profileData), // Now includes email
       });
 
       const data = await response.json();
 
       if (data.success) {
-        // FIXED: Update with the actual user data returned from server
         updateUser(data.user);
         setIsEditing(false);
         toast.success('Profile updated successfully!');
@@ -112,7 +120,6 @@ const Profile = () => {
     setLoading(true);
 
     try {
-      // FIXED: Changed from 127.0.0.1 to localhost
       const response = await fetch('http://localhost:5000/api/auth/change-password', {
         method: 'POST',
         credentials: 'include',
@@ -218,6 +225,21 @@ const Profile = () => {
                 </div>
               </div>
 
+              {/* FIXED: Added email input field */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Email Address
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  value={profileData.email}
+                  onChange={handleProfileChange}
+                  className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-green-500 focus:border-green-500"
+                  required
+                />
+              </div>
+
               <div className="flex space-x-3">
                 <button
                   type="submit"
@@ -230,9 +252,11 @@ const Profile = () => {
                   type="button"
                   onClick={() => {
                     setIsEditing(false);
+                    // FIXED: Reset email field too
                     setProfileData({
                       first_name: user?.first_name || '',
                       last_name: user?.last_name || '',
+                      email: user?.email || '',
                     });
                   }}
                   className="bg-gray-200 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-300"

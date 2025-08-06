@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import { Mail, ArrowLeft, Send } from 'lucide-react';
+import { Mail, ArrowLeft, Send, AlertCircle } from 'lucide-react';
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
@@ -32,7 +32,8 @@ const ForgotPassword = () => {
     setLoading(true);
 
     try {
-      const response = await fetch('http://127.0.0.1:5000/api/auth/forgot-password', {
+      // FIXED: Changed from 127.0.0.1 to localhost
+      const response = await fetch('http://localhost:5000/api/auth/forgot-password', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -120,17 +121,32 @@ const ForgotPassword = () => {
             Forgot Password?
           </h2>
           <p className="mt-2 text-sm text-gray-600">
-            Enter your email address and we'll send you a link to reset your password.
+            Enter your account email address and we'll send you a link to reset your password.
           </p>
         </div>
 
         {/* Form */}
         <div className="bg-white py-8 px-6 shadow-xl rounded-lg">
+          {/* ADDED: Important Notice */}
+          <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <div className="flex items-start">
+              <AlertCircle className="h-5 w-5 text-blue-600 mt-0.5 mr-3 flex-shrink-0" />
+              <div>
+                <h3 className="text-sm font-medium text-blue-800 mb-1">
+                  Important Notice
+                </h3>
+                <p className="text-sm text-blue-700">
+                  Enter the email address from your admin account profile. The reset link will only be sent to registered account emails.
+                </p>
+              </div>
+            </div>
+          </div>
+
           <form className="space-y-6" onSubmit={handleSubmit}>
             {/* Email Field */}
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                Email Address
+                Account Email Address
               </label>
               <div className="mt-1 relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -152,12 +168,16 @@ const ForgotPassword = () => {
                   className={`block w-full pl-10 pr-3 py-2 border rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-green-500 focus:border-green-500 ${
                     errors.email ? 'border-red-300' : 'border-gray-300'
                   }`}
-                  placeholder="Enter your email"
+                  placeholder="Enter your registered email"
                 />
               </div>
               {errors.email && (
                 <p className="mt-1 text-sm text-red-600">{errors.email}</p>
               )}
+              {/* ADDED: Helper text */}
+              <p className="mt-1 text-xs text-gray-500">
+                This must match the email in your account profile
+              </p>
             </div>
 
             {/* Submit Button */}
