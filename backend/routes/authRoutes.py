@@ -144,9 +144,12 @@ def register():
         db.session.rollback()
         return jsonify({'success': False, 'message': f'Registration failed: {str(e)}'}), 500
 
+# ============================================
+# UPDATED FORGOT PASSWORD WITH ADMIN VALIDATION
+# ============================================
 @auth_bp.route('/api/auth/forgot-password', methods=['POST'])
 def forgot_password():
-    """Send password reset email"""
+    """Send password reset email with admin email validation"""
     try:
         data = request.get_json()
         
@@ -165,29 +168,37 @@ def forgot_password():
         user = User.query.filter_by(email=email).first()
         
         if not user:
-            # Don't reveal if email exists or not for security
             return jsonify({
-                'success': True,
-                'message': 'If the email exists, a password reset link has been sent'
-            }), 200
+                'success': False,
+                'message': 'No account found with this email address. Please check your email and try again.'
+            }), 404
         
         if not user.is_active:
             return jsonify({
-                'success': True,
-                'message': 'If the email exists, a password reset link has been sent'
-            }), 200
+                'success': False,
+                'message': 'This account is currently deactivated. Please contact support.'
+            }), 403
+        
+        # Check if this is an admin account
+        if not user.is_admin:
+            return jsonify({
+                'success': False,
+                'message': 'Password reset is only available for administrator accounts.'
+            }), 403
         
         # Generate reset token
         reset_token = user.generate_reset_token()
         
-        # Create reset URL - Updated to use correct frontend port
+        # Create reset URL
         reset_url = f"http://localhost:3002/reset-password?token={reset_token}&email={email}"
         
         # Send email
         if send_password_reset_email(user, reset_url):
             return jsonify({
                 'success': True,
-                'message': 'Password reset link has been sent to your email'
+                'message': f'Password reset link has been sent to {email}. Please check your inbox.',
+                'admin_confirmed': True,  # Frontend can use this flag
+                'admin_name': f'{user.first_name} {user.last_name}'
             }), 200
         else:
             return jsonify({
@@ -196,6 +207,7 @@ def forgot_password():
             }), 500
             
     except Exception as e:
+        print(f"❌ Forgot password error: {str(e)}")
         return jsonify({'success': False, 'message': f'Request failed: {str(e)}'}), 500
 
 @auth_bp.route('/api/auth/reset-password', methods=['POST'])
@@ -318,7 +330,7 @@ def admin_reset_user_password():
         # Generate reset token
         reset_token = user.generate_reset_token()
         
-        # Create reset URL - Updated to use correct frontend port
+        # Create reset URL
         reset_url = f"http://localhost:3002/reset-password?token={reset_token}&email={user_email}"
         
         # Send email
@@ -337,7 +349,7 @@ def admin_reset_user_password():
         return jsonify({'success': False, 'message': f'Request failed: {str(e)}'}), 500
 
 # ============================================
-# FIXED PROFILE ROUTE WITH EMAIL SUPPORT
+# FIXED PROFILE ROUTE WITH EMAIL SUPPORT (REMOVED DUPLICATE)
 # ============================================
 @auth_bp.route('/api/auth/profile', methods=['GET', 'PUT'])
 @login_required
@@ -361,65 +373,25 @@ def profile():
             
             first_name = data.get('first_name', '').strip()
             last_name = data.get('last_name', '').strip()
-            email = data.get('email', '').strip().lower()  # ← ADDED EMAIL!
+            email = data.get('email', '').strip().lower()
             
             # Validate required fields
-            if not all([first_name, last_name, email]):  # ← UPDATED VALIDATION!
+            if not all([first_name, last_name, email]):
                 return jsonify({'success': False, 'message': 'First name, last name, and email are required'}), 400
             
             # Validate email format
-            if not validate_email(email):  # ← ADDED EMAIL VALIDATION!
+            if not validate_email(email):
                 return jsonify({'success': False, 'message': 'Invalid email format'}), 400
             
             # Check if email already exists (for different user)
             existing_user = User.query.filter_by(email=email).first()
-            if existing_user and existing_user.id != current_user.id:  # ← PREVENT EMAIL CONFLICTS!
+            if existing_user and existing_user.id != current_user.id:
                 return jsonify({'success': False, 'message': 'Email address is already in use'}), 400
             
             # Update profile
             current_user.first_name = first_name
             current_user.last_name = last_name
-            current_user.email = email  # ← ADDED EMAIL UPDATE!
-            
-            db.session.commit()
-            print(f"✅ Profile updated successfully for {current_user.email}")
-            
-            return jsonify({
-                'success': True,
-                'message': 'Profile updated successfully',
-                'user': current_user.to_dict()
-            }), 200
-            
-    except Exception as e:
-        print(f"❌ Profile route error: {str(e)}")
-        db.session.rollback()
-        return jsonify({'success': False, 'message': f'Profile operation failed: {str(e)}'}), 500
-    """Get or update user profile"""
-    try:
-        print(f"🔍 Profile route accessed by user: {current_user.email if current_user.is_authenticated else 'Anonymous'}")
-        
-        if request.method == 'GET':
-            return jsonify({
-                'success': True,
-                'user': current_user.to_dict()
-            }), 200
-        
-        elif request.method == 'PUT':
-            data = request.get_json()
-            print(f"🔍 Profile update data: {data}")
-            
-            if not data:
-                return jsonify({'success': False, 'message': 'No data provided'}), 400
-            
-            first_name = data.get('first_name', '').strip()
-            last_name = data.get('last_name', '').strip()
-            
-            if not all([first_name, last_name]):
-                return jsonify({'success': False, 'message': 'First name and last name are required'}), 400
-            
-            # Update profile
-            current_user.first_name = first_name
-            current_user.last_name = last_name
+            current_user.email = email
             
             db.session.commit()
             print(f"✅ Profile updated successfully for {current_user.email}")
