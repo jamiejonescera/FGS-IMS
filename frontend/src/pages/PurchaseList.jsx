@@ -87,14 +87,15 @@ export default function PurchaseList() {
 
   return (
     <div className="p-6">
-      <div className="flex items-center justify-between mb-6 border-b-2 border-gray-500 pb-2">
+      {/* FIXED: Changed border from gray-500 to gray-200 */}
+      <div className="flex items-center justify-between mb-6 border-b-2 border-gray-200 pb-2">
         <h2 className="text-2xl font-bold">Purchase List</h2>
         {/* Search and Status Filter */}
         <div className="flex gap-4">
-          <label className="input input-bordered flex items-center gap-2">
+          <div className="flex items-center gap-2 bg-white border border-gray-300 rounded-lg px-3 py-2">
             <input
               type="text"
-              className="grow"
+              className="bg-white text-gray-900 outline-none flex-1"
               placeholder="Search purchase"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -106,11 +107,11 @@ export default function PurchaseList() {
                 clipRule="evenodd"
               />
             </svg>
-          </label>
+          </div>
 
-          {/* Status Filter Dropdown */}
+          {/* FIXED: Changed DaisyUI select to clean Tailwind */}
           <select
-            className="select select-bordered"
+            className="bg-white text-gray-900 border border-gray-300 rounded-lg px-3 py-2 outline-none"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
           >
@@ -143,7 +144,8 @@ export default function PurchaseList() {
       <div className="relative overflow-y-auto max-h-[750px] shadow-md sm:rounded-lg mb-6 custom-scrollbar">
         {filteredPurchases.length > 0 && (
           <table className="w-full text-sm text-left rtl:text-right text-gray-500">
-            <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+            {/* FIXED: Changed table header to white with border */}
+            <thead className="text-xs text-gray-700 uppercase bg-white border-b border-gray-200">
               <tr>
                 <th scope="col" className="px-6 py-4">Product Name</th>
                 <th scope="col" className="px-6 py-4">Brand</th>
@@ -160,7 +162,8 @@ export default function PurchaseList() {
               {filteredPurchases.map((purchase, index) => (
                 <tr
                   key={`${purchase.request_id}-${index}`}
-                  className="odd:bg-white even:bg-gray-50 border-b"
+                 
+                  className="odd:bg-white even:bg-gray-100 border-b border-gray-200"
                   ref={index === filteredPurchases.length - 1 ? newPurchaseRef : null} 
                 >
                   <td className="px-6 py-4">{purchase.product_name}</td>

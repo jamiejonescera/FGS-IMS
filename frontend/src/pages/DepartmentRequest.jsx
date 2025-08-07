@@ -84,20 +84,20 @@ export default function DepartmentRequest() {
 
   return (
     <div className="p-6">
-      {/* Header Section */}
-      <div className="flex items-center justify-between mb-6 border-b-2 border-gray-500 pb-2">
+      {/* Header Section - FIXED: Changed border to light gray */}
+      <div className="flex items-center justify-between mb-6 border-b-2 border-gray-200 pb-2">
         <h2 className="text-2xl font-bold">Department Requests</h2>
         <div className="flex items-center">
-          {/* Search Bar */}
-          <label className="input input-bordered flex items-center gap-2 mr-5">
+          {/* Search Bar - FIXED: Changed from DaisyUI to Tailwind */}
+          <div className="flex items-center gap-2 mr-5 bg-white border border-gray-300 rounded-lg px-3 py-2">
             <input
               type="text"
-              className="grow"
+              className="bg-white text-gray-900 outline-none flex-1"
               placeholder="Search"
               value={searchTerm}
               onChange={handleSearchChange}
             />
-          </label>
+          </div>
           {/* Add Request Button */}
           <button
             type="button"
@@ -130,7 +130,8 @@ export default function DepartmentRequest() {
       <div className="relative overflow-y-auto max-h-[750px] shadow-md sm:rounded-lg mb-6 custom-scrollbar">
         {filteredRequests.length > 0 && (
           <table className="w-full text-sm text-left rtl:text-right text-gray-500">
-            <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+            {/* FIXED: Changed table header background to white */}
+            <thead className="text-xs text-gray-700 uppercase bg-white border-b border-gray-200">
               <tr>
                 <th scope="col" className="px-6 py-4">Department Name</th>
                 <th scope="col" className="px-6 py-4">Product Name</th>
@@ -144,7 +145,8 @@ export default function DepartmentRequest() {
               {filteredRequests.map((request, index) => (
                 <tr
                   key={`${request.department_request_id}-${index}`}
-                  className="odd:bg-white even:bg-gray-50 border-b"
+                  // FIXED: Changed alternating rows to white and very light gray
+                  className="odd:bg-white even:bg-gray-100 border-b border-gray-200"
                   ref={index === filteredRequests.length - 1 ? newRequestRef : null} 
                 >
                   <td className="px-6 py-4">{request.department_name}</td>

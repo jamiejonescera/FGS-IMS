@@ -95,7 +95,7 @@ const Login = () => {
             Welcome Back
           </h2>
           <p className="mt-2 text-sm text-gray-600">
-            Sign in to your Flordegrace account
+            Flor de Grace Inventory Management System 
           </p>
         </div>
 

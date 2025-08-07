@@ -62,10 +62,6 @@ export default function PurchaseList() {
         setPurchase(updatedPurchases);
   
         handleCloseModal();
-
-        // setTimeout(() => {
-        //   window.location.reload();
-        // }, 600);
       
       } else {
         toast.error(data.error || 'Something went wrong.');
@@ -84,8 +80,8 @@ export default function PurchaseList() {
 
   return (
     <div className="p-6">
-      {/* Modal for evaluation, ensure it's outside the table */}
-      {/* {isModalOpen && (
+      {/* FIXED: Modal with clean white inputs */}
+      {isModalOpen && (
         <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50">
           <div className="bg-white p-6 rounded-lg shadow-md w-96">
             <h3 className="text-lg font-bold mb-4">Evaluate Purchase Request</h3>
@@ -93,84 +89,53 @@ export default function PurchaseList() {
               <label className="block text-sm">Approved Quantity</label>
               <input
                 type="number"
-                value={undamagedQuantity}
-                onChange={(e) => setUndamagedQuantity(Number(e.target.value))}
-                className="input input-bordered w-full"
-                placeholder='0'
+                value={undamagedQuantity === 0 ? '' : undamagedQuantity}
+                onChange={(e) =>
+                  setUndamagedQuantity(e.target.value === '' ? 0 : Number(e.target.value))
+                }
+                className="mt-1 block w-full px-4 py-2 bg-white text-gray-900 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                placeholder="Enter approved quantity"
               />
             </div>
             <div className="mb-4">
               <label className="block text-sm">Rejected Quantity</label>
               <input
                 type="number"
-                value={damagedQuantity}
-                onChange={(e) => setDamagedQuantity(Number(e.target.value))}
-                className="input input-bordered w-full"
-                placeholder='0'
+                value={damagedQuantity === 0 ? '' : damagedQuantity}
+                onChange={(e) =>
+                  setDamagedQuantity(e.target.value === '' ? 0 : Number(e.target.value))
+                }
+                className="mt-1 block w-full px-4 py-2 bg-white text-gray-900 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+                placeholder="Enter rejected quantity"
               />
             </div>
             <div className="flex justify-end space-x-2">
-              <button onClick={handleCloseModal} 
-              className="px-4 py-2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-lg shadow-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400"
-              >Cancel</button>
-              <button onClick={handleEvaluate} 
-               className="bg-green-700 text-white px-4 py-2 rounded-lg"
-               
-              ><FontAwesomeIcon icon={faEdit} className="mr-2" /> Evaluate</button>
+              <button
+                onClick={handleCloseModal}
+                className="px-4 py-2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-lg shadow-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleEvaluate}
+                className="bg-green-700 text-white px-4 py-2 rounded-lg"
+              >
+                <FontAwesomeIcon icon={faEdit} className="mr-2" /> Evaluate
+              </button>
             </div>
           </div>
         </div>
-      )} */}
-      {isModalOpen && (
-  <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-50 z-50">
-    <div className="bg-white p-6 rounded-lg shadow-md w-96">
-      <h3 className="text-lg font-bold mb-4">Evaluate Purchase Request</h3>
-      <div className="mb-4">
-        <label className="block text-sm">Approved Quantity</label>
-        <input
-          type="number"
-          value={undamagedQuantity === 0 ? '' : undamagedQuantity}
-          onChange={(e) =>
-            setUndamagedQuantity(e.target.value === '' ? 0 : Number(e.target.value))
-          }
-          className="input input-bordered w-full"
-          placeholder="Enter approved quantity"
-        />
-      </div>
-      <div className="mb-4">
-        <label className="block text-sm">Rejected Quantity</label>
-        <input
-          type="number"
-          value={damagedQuantity === 0 ? '' : damagedQuantity}
-          onChange={(e) =>
-            setDamagedQuantity(e.target.value === '' ? 0 : Number(e.target.value))
-          }
-          className="input input-bordered w-full"
-          placeholder="Enter rejected quantity"
-        />
-      </div>
-      <div className="flex justify-end space-x-2">
-        <button
-          onClick={handleCloseModal}
-          className="px-4 py-2 text-gray-700 bg-gray-200 hover:bg-gray-300 rounded-lg shadow-sm font-medium focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400"
-        >
-          Cancel
-        </button>
-        <button
-          onClick={handleEvaluate}
-          className="bg-green-700 text-white px-4 py-2 rounded-lg"
-        >
-          <FontAwesomeIcon icon={faEdit} className="mr-2" /> Evaluate
-        </button>
-      </div>
-    </div>
-  </div>
-)}
+      )}
+
       {/* Purchase List */}
-      <div className="flex items-center justify-between mb-6 border-b-2 border-gray-500 pb-2">
+      <div className="flex items-center justify-between mb-6 border-b-2 border-gray-200 pb-2">
         <h2 className="text-2xl font-bold">Evaluate Checklist</h2>
-        <label className="input input-bordered flex items-center gap-20 mr-5">
-          <input type="text" className="grow" placeholder="Search" />
+        <div className="flex items-center gap-2 mr-5 bg-white border border-gray-300 rounded-lg px-3 py-2">
+          <input 
+            type="text" 
+            className="bg-white text-gray-900 outline-none flex-1" 
+            placeholder="Search checklist..." 
+          />
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="h-4 w-4 opacity-70">
             <path
               fillRule="evenodd"
@@ -178,7 +143,7 @@ export default function PurchaseList() {
               clipRule="evenodd"
             />
           </svg>
-        </label>
+        </div>
       </div>
 
       {/* Loading, Error, and Empty State Messages */}
@@ -202,9 +167,9 @@ export default function PurchaseList() {
       <div className="relative overflow-y-auto max-h-[750px] shadow-md sm:rounded-lg mb-6 custom-scrollbar">
         {pendingPurchases.length > 0 && (
           <table className="w-full text-sm text-left rtl:text-right text-gray-500">
-            <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+            {/* FIXED: Changed table header to white */}
+            <thead className="text-xs text-gray-700 uppercase bg-white border-b border-gray-200">
               <tr>
-                {/* <th scope="col" className="px-6 py-4">Request Id</th> */}
                 <th scope="col" className="px-6 py-4">Product Name</th>
                 <th scope="col" className="px-6 py-4">Brand</th>
                 <th scope="col" className="px-6 py-4">Model</th>
@@ -220,10 +185,10 @@ export default function PurchaseList() {
               {pendingPurchases.map((purchase, index) => (
                 <tr
                   key={`${purchase.request_id}-${index}`}
-                  className="odd:bg-white even:bg-gray-50 border-b"
-                  ref={index === pendingPurchases.length - 1 ? newPurchaseRef : null} // Reference the last item
+                 
+                  className="odd:bg-white even:bg-gray-100 border-b border-gray-200"
+                  ref={index === pendingPurchases.length - 1 ? newPurchaseRef : null}
                 >
-                  {/* <td className="px-6 py-4">{purchase.request_id}</td> */}
                   <td className="px-6 py-4">{purchase.product_name}</td>
                   <td className="px-6 py-4">{purchase.brand}</td>
                   <td className="px-6 py-4">{purchase.model}</td>

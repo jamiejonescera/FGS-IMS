@@ -43,14 +43,15 @@ export default function Inventory() {
 
   return (
     <div className="p-6">
-      <div className="flex items-center justify-between mb-6 border-b-2 border-gray-500 pb-2">
+      
+      <div className="flex items-center justify-between mb-6 border-b-2 border-gray-200 pb-2">
         <h2 className="text-2xl font-bold">Inventory</h2>
         <div className="flex items-center">
-          <label className="input input-bordered flex items-center gap-20 mr-5">
+          <div className="flex items-center gap-2 mr-5 bg-white border border-gray-300 rounded-lg px-3 py-2">
             <input
               type="text"
-              className="grow"
-              placeholder="Search"
+              className="bg-white text-gray-900 outline-none flex-1"
+              placeholder="Search inventory..."
               value={searchTerm}
               onChange={handleSearchChange}
             />
@@ -66,7 +67,7 @@ export default function Inventory() {
                 clipRule="evenodd"
               />
             </svg>
-          </label>
+          </div>
         </div>
       </div>
 

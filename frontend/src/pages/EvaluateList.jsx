@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { useEvaluate } from '../hooks/useEvaluations';
 
@@ -64,13 +63,13 @@ export default function EvaluateList() {
 
   return (
     <div className="p-6">
-      <div className="flex items-center justify-between mb-6 border-b-2 border-gray-500 pb-2">
+      <div className="flex items-center justify-between mb-6 border-b-2 border-gray-200 pb-2">
         <h2 className="text-2xl font-bold">Evaluate List</h2>
-        <label className="input input-bordered flex items-center gap-20 mr-5">
+        <div className="flex items-center gap-2 mr-5 bg-white border border-gray-300 rounded-lg px-3 py-2">
           <input
             type="text"
-            className="grow"
-            placeholder="Search"
+            className="bg-white text-gray-900 outline-none flex-1"
+            placeholder="Search evaluations..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -81,7 +80,7 @@ export default function EvaluateList() {
               clipRule="evenodd"
             />
           </svg>
-        </label>
+        </div>
       </div>
 
       {/* Loading, Error, and Empty State Messages */}
@@ -105,9 +104,8 @@ export default function EvaluateList() {
       <div className="relative overflow-y-auto max-h-[750px] shadow-md sm:rounded-lg mb-6 custom-scrollbar">
         {filteredEvaluations.length > 0 && (
           <table className="w-full text-sm text-left rtl:text-right text-gray-500">
-            <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+            <thead className="text-xs text-gray-700 uppercase bg-white border-b border-gray-200">
               <tr>
-                {/* <th scope="col" className="px-6 py-4">Evaluation ID</th> */}
                 <th scope="col" className="px-6 py-4">Product Name</th>
                 <th scope="col" className="px-6 py-4">Quantity</th>
                 <th scope="col" className="px-6 py-4">Supplier Name</th>
@@ -123,10 +121,9 @@ export default function EvaluateList() {
               {filteredEvaluations.map((evaluation, index) => (
                 <tr
                   key={evaluation.evaluation_id}
-                  ref={index === filteredEvaluations.length - 1 ? newEvaluationRef : null} // Reference the last item
-                  className="odd:bg-white even:bg-gray-50 border-b"
+                  ref={index === filteredEvaluations.length - 1 ? newEvaluationRef : null}
+                  className="odd:bg-white even:bg-gray-100 border-b border-gray-200"
                 >
-                  {/* <td className="px-6 py-4">{evaluation.evaluation_id}</td> */}
                   <td className="px-6 py-4">{evaluation.product_name}</td>
                   <td className="px-6 py-4">{evaluation.quantity}</td>
                   <td className="px-6 py-4">{evaluation.supplier_name}</td>
@@ -177,7 +174,6 @@ export default function EvaluateList() {
               <p><strong>Total Amount:</strong> ₱{new Intl.NumberFormat().format(selectedEvaluation.total_amount)}</p>
               <p><strong>Approved Quantity:</strong> {selectedEvaluation.undamaged_quantity}</p>
               <p><strong>Rejected Quantity:</strong> {selectedEvaluation.damaged_quantity}</p>
-                {/* Status with color */}
                 <p>
                 <strong>Status: </strong>
                 <span

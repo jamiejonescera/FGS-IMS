@@ -168,7 +168,6 @@ export default function Products() {
 
       const { product, message } = jsonResponse;
 
-      // Handle "No changes made" response
       if (!product && message === "No changes made to the product") {
         closeUpdateModal();
         toast.success(message || "No changes made to the product.");
@@ -178,7 +177,6 @@ export default function Products() {
       closeUpdateModal();
       toast.success(message || 'Product updated successfully!');
 
-      // Update the product in the state without supplier_name
       setProducts((prevProducts) =>
         prevProducts.map((p) =>
           p.product_id === product.product_id
@@ -216,7 +214,6 @@ export default function Products() {
     }
   };
 
-  // Smooth scroll to the newly added product
   useEffect(() => {
     if (newProductRef.current) {
       newProductRef.current.scrollIntoView({ behavior: 'smooth' });
@@ -225,14 +222,14 @@ export default function Products() {
 
   return (
     <div className="p-6">
-      <div className="flex items-center justify-between mb-6 border-b-2 border-gray-500 pb-2">
+      <div className="flex items-center justify-between mb-6 border-b-2 border-gray-200 pb-2">
         <h2 className="text-2xl font-bold">Predefined Products</h2>
         <div className="flex items-center">
-          <label className="input input-bordered flex items-center gap-20 mr-5">
+          <div className="flex items-center gap-2 mr-5 bg-white border border-gray-300 rounded-lg px-3 py-2">
             <input
               type="text"
-              className="grow"
-              placeholder="Search"
+              className="bg-white text-gray-900 outline-none flex-1"
+              placeholder="Search products..."
               value={searchTerm}
               onChange={handleSearchChange}
             />
@@ -248,7 +245,7 @@ export default function Products() {
                 clipRule="evenodd"
               />
             </svg>
-          </label>
+          </div>
           <button
             onClick={openModal}
             type="button"
@@ -260,7 +257,6 @@ export default function Products() {
       </div>
       <CategoryDescription />
 
-      {/* Loading, Error, and Empty State Messages */}
       {loading && (
         <div className="flex justify-center items-center h-32">
           <div className="spinner-border animate-spin inline-block w-8 h-8 border-4 rounded-full border-blue-600" role="status" />
@@ -280,7 +276,7 @@ export default function Products() {
       <div className="relative overflow-y-auto max-h-[600px] shadow-md sm:rounded-lg mb-6 custom-scrollbar">
         {filteredProducts.length > 0 && (
           <table className="w-full text-sm text-left rtl:text-right text-gray-500">
-            <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+            <thead className="text-xs text-gray-700 uppercase bg-white border-b border-gray-200">
               <tr>
                 <th scope="col" className="px-6 py-4">Product Name</th>
                 <th scope="col" className="px-6 py-4">Model</th>
@@ -296,8 +292,8 @@ export default function Products() {
               {filteredProducts.map((product, index) => (
                 <tr
                   key={`${product.product_id}-${index}`}
-                  className="odd:bg-white even:bg-gray-50 border-b"
-                  ref={index === filteredProducts.length - 1 ? newProductRef : null} // Reference the last item
+                  className="odd:bg-white even:bg-gray-100 border-b border-gray-200"
+                  ref={index === filteredProducts.length - 1 ? newProductRef : null}
                 >
                   <td className="px-6 py-4">{product.name}</td>
                   <td className="px-6 py-4">{product.model}</td>

@@ -180,7 +180,7 @@ const ProtectedRoute = ({ children }) => {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500"></div>
-        <span className="ml-2 text-gray-600">Checking authentication...</span>
+        <span className="ml-2 text-white-600">Checking authentication...</span>
       </div>
     );
   }
@@ -204,7 +204,7 @@ const AdminRoute = ({ children }) => {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500"></div>
-        <span className="ml-2 text-gray-600">Checking admin access...</span>
+        <span className="ml-2 text-white-600">Checking admin access...</span>
       </div>
     );
   }

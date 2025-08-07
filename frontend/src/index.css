@@ -52,3 +52,21 @@ body {
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
 }
+
+
+/* Force light color scheme globally */
+* {
+  color-scheme: light !important;
+}
+
+/* More specific targeting */
+html, body {
+  color-scheme: light !important;
+}
+
+/* Target all form elements specifically */
+input, select, textarea {
+  color-scheme: light !important;
+  background-color: white !important;
+  color: #1f2937 !important;
+}

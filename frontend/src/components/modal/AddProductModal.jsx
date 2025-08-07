@@ -106,7 +106,7 @@ const ProductModal = ({ isOpen, closeModal, handleSubmit, formValues, setFormVal
               type="text"
               id="productName"
               name="productName"
-              className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="mt-1 block w-full px-4 py-2 border border-white-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500"
               value={formValues.productName}
               onChange={(e) => setFormValues({ ...formValues, productName: e.target.value })}
               placeholder="Enter Product Name"
