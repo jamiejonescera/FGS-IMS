@@ -284,27 +284,6 @@ def debug_session():
         'all_cookies': dict(request.cookies)
     })
 
-# Create an admin user if it doesn't exist
-def create_admin():
-    admin_email = "admin@gmail.com"
-    admin_password = "Admin123!"
-    existing_admin = User.query.filter_by(email=admin_email).first()
-
-    if not existing_admin:
-        print("✅ Creating admin user...")
-        admin_user = User(
-            email=admin_email,
-            password=bcrypt.generate_password_hash(admin_password).decode('utf-8'),
-            first_name="System",
-            last_name="Administrator",
-            is_admin=True
-        )
-        db.session.add(admin_user)
-        db.session.commit()
-        print(f"✅ Admin user created: {admin_email} / {admin_password}")
-    else:
-        print("✅ Admin user already exists.")
-
 # Serve frontend files
 frontend_folder = os.path.join(os.getcwd(), "..", "frontend", "dist")
 @app.route("/", defaults={"filename": ""})
@@ -368,7 +347,6 @@ if __name__ == '__main__':
     with app.app_context():
         # Create tables if they don't exist
         db.create_all()
-        create_admin()
     
     print("🚀 Application startup complete!")
     print(f"📁 Session directory: {session_dir}")

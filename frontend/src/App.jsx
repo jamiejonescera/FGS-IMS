@@ -43,6 +43,26 @@ const AuthProvider = ({ children }) => {
   const checkAuth = async () => {
     console.log('🔍 checkAuth called');
     try {
+      // First check if it's first time setup
+      const firstTimeResponse = await fetch(`${API_BASE_URL}/api/auth/check-first-time`, {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (firstTimeResponse.ok) {
+        const firstTimeData = await firstTimeResponse.json();
+        if (firstTimeData.is_first_time) {
+          console.log('🔍 First time setup - skipping auth check');
+          setUser(null);
+          setLoading(false);
+          return;
+        }
+      }
+      
+      // Normal auth check
       const response = await fetch(`${API_BASE_URL}/api/auth/check`, {
         method: 'GET',
         credentials: 'include',
@@ -51,24 +71,7 @@ const AuthProvider = ({ children }) => {
         },
       });
   
-      console.log('🔍 Response status:', response.status);
-      console.log('🔍 Response headers:', response.headers);
-      
-      const data = await response.json();
-      console.log('🔍 Response data:', data);
-  
-      if (response.ok) {
-        if (data.success && data.authenticated) {
-          console.log('✅ User authenticated:', data.user);
-          setUser(data.user);
-        } else {
-          console.log('❌ User not authenticated');
-          setUser(null);
-        }
-      } else {
-        console.log('❌ Bad response:', response.status);
-        setUser(null);
-      }
+      // ... rest of your existing auth check logic
     } catch (error) {
       console.error('💥 Auth check error:', error);
       setUser(null);

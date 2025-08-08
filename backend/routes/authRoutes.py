@@ -459,32 +459,140 @@ def logout():
         print(f"❌ Logout error: {str(e)}")
         return jsonify({'success': False, 'message': f'Logout failed: {str(e)}'}), 500
 
+# Add these NEW routes to your existing authRoutes.py file
+
+@auth_bp.route('/api/auth/check-first-time', methods=['GET'])
+def check_first_time():
+    """Check if this is the first time setup (no admin users exist)"""
+    try:
+        # Check if any admin users exist in the database
+        admin_exists = User.query.filter_by(is_admin=True).first()
+        
+        is_first_time = admin_exists is None
+        
+        return jsonify({
+            'success': True,
+            'is_first_time': is_first_time,
+            'message': 'First time setup required' if is_first_time else 'Admin already exists'
+        }), 200
+        
+    except Exception as e:
+        print(f"❌ Error checking first time setup: {str(e)}")
+        return jsonify({
+            'success': False,
+            'message': f'Error checking setup status: {str(e)}'
+        }), 500
+
+@auth_bp.route('/api/auth/first-time-setup', methods=['POST'])
+def first_time_setup():
+    """Create the first admin user (only allowed if no admin exists)"""
+    try:
+        # First, check if any admin already exists
+        existing_admin = User.query.filter_by(is_admin=True).first()
+        if existing_admin:
+            return jsonify({
+                'success': False,
+                'message': 'Admin user already exists. First-time setup is not allowed.'
+            }), 403
+        
+        data = request.get_json()
+        
+        if not data:
+            return jsonify({'success': False, 'message': 'No data provided'}), 400
+        
+        email = data.get('email', '').lower().strip()
+        password = data.get('password', '')
+        confirm_password = data.get('confirm_password', '')
+        first_name = data.get('first_name', '').strip()
+        last_name = data.get('last_name', '').strip()
+        
+        # Validate required fields
+        if not all([email, password, confirm_password, first_name, last_name]):
+            return jsonify({
+                'success': False,
+                'message': 'All fields are required'
+            }), 400
+        
+        # Validate email format
+        if not validate_email(email):
+            return jsonify({'success': False, 'message': 'Invalid email format'}), 400
+        
+        # Validate password confirmation
+        if password != confirm_password:
+            return jsonify({
+                'success': False,
+                'message': 'Passwords do not match'
+            }), 400
+        
+        # Validate password strength
+        is_valid, password_message = validate_password(password)
+        if not is_valid:
+            return jsonify({'success': False, 'message': password_message}), 400
+        
+        # Check if email already exists (shouldn't happen but safety check)
+        if User.query.filter_by(email=email).first():
+            return jsonify({
+                'success': False,
+                'message': 'Email address is already in use'
+            }), 400
+        
+        # Create the first admin user
+        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+        admin_user = User(
+            email=email,
+            password=hashed_password,
+            first_name=first_name,
+            last_name=last_name,
+            is_admin=True,  # First user is always admin
+            is_active=True
+        )
+        
+        db.session.add(admin_user)
+        db.session.commit()
+        
+        print(f"✅ First admin user created: {email}")
+        
+        return jsonify({
+            'success': True,
+            'message': 'Admin account created successfully! You can now log in.',
+            'user': admin_user.to_dict()
+        }), 201
+        
+    except Exception as e:
+        print(f"❌ First-time setup error: {str(e)}")
+        db.session.rollback()
+        return jsonify({
+            'success': False,
+            'message': f'Setup failed: {str(e)}'
+        }), 500
+    
+    
 @auth_bp.route('/api/auth/check', methods=['GET'])
 def check_auth():
     """Check if user is authenticated"""
     try:
-        print(f"🔍 CHECK AUTH DEBUG:")
-        print(f"  - Session ID: {session.get('_id')}")
-        print(f"  - User ID in session: {session.get('_user_id')}")
-        print(f"  - Session keys: {list(session.keys())}")
-        print(f"  - Current user: {current_user}")
-        print(f"  - Is authenticated: {current_user.is_authenticated}")
-        print(f"  - Request cookies: {dict(request.cookies)}")
+        # Check if any users exist first
+        any_users = User.query.first()
+        if not any_users:
+            return jsonify({
+                'success': False,
+                'authenticated': False,
+                'is_first_time': True,
+                'message': 'No users exist - first time setup required'
+            }), 200  # Return 200, not 401
         
+        # Your existing auth check logic
         if current_user.is_authenticated:
-            print(f"✅ User IS authenticated: {current_user.email}")
             return jsonify({
                 'success': True,
                 'authenticated': True,
                 'user': current_user.to_dict()
             }), 200
         else:
-            print(f"❌ User NOT authenticated")
             return jsonify({
                 'success': False,
                 'authenticated': False,
                 'message': 'Not authenticated'
             }), 401
     except Exception as e:
-        print(f"💥 ERROR in check_auth: {str(e)}")
         return jsonify({'success': False, 'authenticated': False, 'message': str(e)}), 401
