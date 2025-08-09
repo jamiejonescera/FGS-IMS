@@ -70,8 +70,29 @@ const AuthProvider = ({ children }) => {
           'Content-Type': 'application/json',
         },
       });
-  
-      // ... rest of your existing auth check logic
+
+      console.log('🔍 Auth check response status:', response.status);
+      console.log('🔍 Auth check response headers:', response.headers);
+      
+      // FIXED: Handle non-OK responses properly
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.log('❌ Auth check failed:', response.status, errorText);
+        setUser(null);
+        setLoading(false);
+        return;
+      }
+      
+      const data = await response.json();
+      console.log('🔍 Auth check response data:', data);
+
+      if (data.success && data.authenticated) {
+        console.log('✅ User authenticated:', data.user);
+        setUser(data.user);
+      } else {
+        console.log('❌ User not authenticated');
+        setUser(null);
+      }
     } catch (error) {
       console.error('💥 Auth check error:', error);
       setUser(null);
@@ -301,7 +322,7 @@ const App = () => {
           <Route path="department-request" element={<DepartmentRequest />} />
         </Route>
 
-        {/* Redirect all ologout ther paths to login */}
+        {/* Redirect all other paths to login */}
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </AuthProvider>
