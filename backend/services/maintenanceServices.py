@@ -1,7 +1,7 @@
 from flask import jsonify, make_response
 from models.maintenance import Maintenance, MaintenanceStatus
 from models.products import Product
-from app import db
+from extensions import db
 from datetime import datetime
 import pytz
 

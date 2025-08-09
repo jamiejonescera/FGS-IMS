@@ -4,7 +4,7 @@ from models.evaluate import Evaluation
 from models.damage import DamagedItem, ReturnStatusEnum
 from models.inventory import Inventory
 from models.products import Product
-from app import db
+from extensions import db
 
 def evaluate_purchase_request(request_id, undamaged_quantity, damaged_quantity):
     try:

@@ -1,6 +1,6 @@
 from flask import jsonify, make_response
 from models.inventory import Inventory
-from app import db
+from extensions import db
 
 # Service function to get all inventory
 def get_inventory():

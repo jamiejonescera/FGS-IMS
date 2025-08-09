@@ -1,7 +1,7 @@
 from flask import jsonify, make_response
 from models.products import Product, ProductType
 from models.supplier import Supplier
-from app import db
+from extensions import db
 from psycopg2.errors import NumericValueOutOfRange
 from sqlalchemy.exc import IntegrityError
 

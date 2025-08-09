@@ -1,4 +1,3 @@
-from app import app
 from flask import Blueprint, request
 from services.supplierServices import get_suppliers, get_supplier_by_id, create_supplier, update_supplier, delete_supplier
 

@@ -1,4 +1,3 @@
-from app import app
 from flask import Blueprint, request
 from services.productsServices import create_product, get_products, update_product, delete_product, get_product_by_id
 

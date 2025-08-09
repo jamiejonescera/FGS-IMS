@@ -42,13 +42,14 @@ app.config['SQLALCHEMY_DATABASE_URI'] = database_url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Initialize extensions
-db = SQLAlchemy(app)
+from extensions import db
+db.init_app(app)
 migrate = Migrate(app, db)
 bcrypt = Bcrypt(app)
 
-# Initialize User model with db instance
-from models.users import init_db
-User = init_db(db)
+# # Initialize User model with db instance
+# from models.users import init_db
+# User = init_db(db)
 
 # ============================================
 # FIXED SESSION CONFIGURATION
@@ -296,6 +297,7 @@ def index(filename):
     except FileNotFoundError:
         abort(404)
 
+from models.users import User
 # Import and register Blueprints
 from routes.departmentRoutes import department_bp
 from routes.supplierRoutes import supplier_bp

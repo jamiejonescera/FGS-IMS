@@ -2,7 +2,7 @@ from flask import jsonify, make_response
 from models.productsupplier import ProductSupplier, Status
 from models.supplier import Supplier
 from models.products import Product
-from app import db
+from extensions import db
 from psycopg2.errors import NumericValueOutOfRange
 
 

@@ -1,6 +1,6 @@
 from flask import request, jsonify, make_response
 from models.department import DepartmentFacility
-from app import db
+from extensions import db
 
 # Get all departments
 def get_departments():
@@ -86,18 +86,33 @@ def update_department(department_id, data):
 
 
 # Delete an existing department
+# Delete an existing department
 def delete_department(department_id):
     try:
+        # Import DepartmentRequest model to check for dependencies
+        from models.departmentrequest import DepartmentRequest
+        
+        # Check if there are any department requests for this classroom
+        existing_requests = DepartmentRequest.query.filter_by(department_id=department_id).count()
+        
+        if existing_requests > 0:
+            return jsonify({
+                'error': f'Cannot delete this classroom. It has {existing_requests} pending requests that must be resolved first.',
+                'details': 'Please complete or cancel all department requests before deleting this classroom.'
+            }), 400
+        
+        # Check if department exists
         department = DepartmentFacility.query.get(department_id)
         
         if not department:
-            return jsonify({'error': 'Department not found'}), 404
+            return jsonify({'error': 'Classroom not found'}), 404
         
+        # Safe to delete - no related requests
         db.session.delete(department)
         db.session.commit()
 
-        return jsonify({'message': 'Department deleted successfully'}), 200
+        return jsonify({'message': 'Classroom deleted successfully'}), 200
 
     except Exception as e:
         db.session.rollback()
-        return jsonify({'error': str(e)}), 500
+        return jsonify({'error': f'An error occurred: {str(e)}'}), 500

@@ -1,7 +1,7 @@
 import bcrypt
 from flask import make_response, jsonify, session, redirect, url_for, request
-from app import db
-from models.users import User, RoleEnum
+from extensions import db
+from models.users import User
 
 def create_user(data):
     try:

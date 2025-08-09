@@ -71,28 +71,41 @@ export default function Departments() {
       toast.error('Error: ' + (error.message || 'An unexpected error occurred.'));
     }
   };
-
+  
   // Handle deleting a department
-  const handleDelete = async (departmentId) => {
-    try {
-      const response = await fetch(`/api/department/delete/${departmentId}`, {
-        method: 'DELETE',
-      });
+const handleDelete = async (departmentId) => {
+  try {
+    const response = await fetch(`/api/department/delete/${departmentId}`, {
+      method: 'DELETE',
+    });
 
-      if (!response.ok) {
-        const errorResponse = await response.json();
-        throw new Error(errorResponse.error || 'Failed to delete department');
+    const responseData = await response.json();
+
+    if (!response.ok) {
+      // Show detailed error message for foreign key constraints
+      if (response.status === 400 && responseData.details) {
+        toast.error(
+          <div>
+            <div className="font-semibold">{responseData.error}</div>
+            <div className="text-sm mt-1">{responseData.details}</div>
+          </div>,
+          { duration: 6000 } // Show longer for detailed message
+        );
+      } else {
+        toast.error(responseData.error || 'Failed to delete classroom');
       }
-
-      toast.success('Department deleted successfully!');
-
-      setDepartments((prevDepartments) =>
-        prevDepartments.filter((department) => department.department_id !== departmentId)
-      );
-    } catch (error) {
-      toast.error('Error: ' + (error.message || 'An unexpected error occurred.'));
+      return;
     }
-  };
+
+    toast.success('Classroom deleted successfully!');
+
+    setDepartments((prevDepartments) =>
+      prevDepartments.filter((department) => department.department_id !== departmentId)
+    );
+  } catch (error) {
+    toast.error('Error: ' + (error.message || 'An unexpected error occurred.'));
+  }
+};
 
   // Handle updating the department
   const handleUpdate = async (e) => {

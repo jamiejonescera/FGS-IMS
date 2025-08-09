@@ -1,7 +1,7 @@
 from flask import jsonify, make_response
 from models.damage import DamagedItem
 from models.inventory import Inventory
-from app import db
+from extensions import db
 
 # Service function to update a damaged item's status and inventory
 def update_damage_status(damaged_item_id):

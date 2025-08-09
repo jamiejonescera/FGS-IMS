@@ -1,7 +1,8 @@
 from flask import Blueprint, request, jsonify, url_for, session
 from flask_login import login_user, logout_user, login_required, current_user
 from flask_bcrypt import Bcrypt
-from app import User, db
+from extensions import db
+from models.users import User
 from config.email_config import send_password_reset_email, send_password_changed_notification
 import re
 

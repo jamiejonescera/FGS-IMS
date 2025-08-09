@@ -2,7 +2,7 @@ from flask import request, jsonify, make_response
 from models.purchase import PurchaseRequest, PurchaseRequestStatusEnum
 from models.products import Product
 from models.supplier import Supplier
-from app import db
+from extensions import db
 from sqlalchemy import func
 
 # Service function to create a new purchase request

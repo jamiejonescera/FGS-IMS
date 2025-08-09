@@ -3,7 +3,7 @@ from models.departmentrequest import DepartmentRequest
 from models.inventory import Inventory
 from models.department import DepartmentFacility
 from models.products import Product
-from app import db
+from extensions import db
 from datetime import datetime
 from sqlalchemy import func
 

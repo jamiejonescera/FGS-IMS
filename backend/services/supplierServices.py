@@ -1,6 +1,6 @@
 from flask import request, jsonify, make_response
 from models.supplier import Supplier, SupplierStatus
-from app import db
+from extensions import db
 from sqlalchemy.exc import IntegrityError
 
 # Service function to get all suppliers

@@ -1,4 +1,3 @@
-from app import app
 from flask import Blueprint, request
 from services.departmentServices import get_departments, get_department_by_id, create_department, update_department, delete_department
 
